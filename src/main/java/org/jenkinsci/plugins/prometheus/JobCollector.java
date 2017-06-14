@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import hudson.model.Job;
 import hudson.model.Run;
 import io.prometheus.client.Collector;
+import io.prometheus.client.Collector.MetricFamilySamples.Sample;
 import io.prometheus.client.Summary;
 
 public class JobCollector extends Collector {
@@ -74,6 +75,19 @@ public class JobCollector extends Collector {
                     }
                 }
                 logger.debug("Job [{}] is not already added. Appending its metrics", job.getName());
+                
+                //test self extension
+                List<String> values = new ArrayList<>();
+                values.add("Success");
+                List<String> labels = new ArrayList<>();
+                labels.add("buildresult");
+                Sample buildResult = new MetricFamilySamples.Sample(fullname + job.getFullName() + "_buildResult", labels, values, 0.0);
+                List<Sample> testbuildResult = new ArrayList<>();
+                testbuildResult.add(buildResult);
+                MetricFamilySamples buildResult1 = new MetricFamilySamples(fullname+"_buildResult", Type.SUMMARY , "Display detail about a job.",testbuildResult );
+                samples.add(buildResult1);
+              //test self extension
+                
                 jobs.add(job);
                 appendJobMetrics(job);
             }
